@@ -196,7 +196,7 @@ local configPegarTask = {
 
 
 
-setDefaultTab("main")
+setDefaultTab("tools")
 
 incompleteTaskMacro = macro(1000, "Task Atual", function() end)
 
@@ -288,6 +288,7 @@ Panel
 
 
   ]], parent)
+
 
 
 
