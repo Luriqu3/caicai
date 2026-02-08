@@ -1,3 +1,54 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 storage.taskParams = storage.taskParams or {
     taskFinalized = false,
     progress = 0,
@@ -9,8 +60,7 @@ onTextMessage(function(mode, text)
     if not text then return end
     local ltext = text:lower()
 
-    -- COMEÇOU A TASK
-    -- Exemplo: "Zamasu: Sua task é matar namekjin"
+
     if ltext:find("sua task é matar") then
         local mob = ltext:match("matar %s+(.*)")
         if mob then
@@ -22,15 +72,13 @@ onTextMessage(function(mode, text)
         return
     end
 
-    -- TASK FINALIZADA
-    -- Exemplo: "[TASK] Você completou a task! Vá até o NPC"
+
     if ltext:find("completou a task") then
         storage.taskParams.taskFinalized = true
         return
     end
 
-    -- PROGRESSO
-    -- Exemplo: "[TASK] 41/50 namekjin(s)."
+
     if ltext:find("%[task%]") then
         local defeated, total = ltext:match("(%d+)%s*/%s*(%d+)")
         if defeated and total then
@@ -59,15 +107,11 @@ end
 
 onTalk(function(name, level, mode, text, channelId, pos)
     if name ~= "Zamasu" then return end
-
-    -- Captura somente o texto até o primeiro ponto final
     local inicio = text:match("Sua task é matar ([^.]+%.)")
     local proxima = text:match("Sua próxima task é matar ([^.]+%.)")
 
     local mob = inicio or proxima
     if not mob then return end
-
-    -- Fala somente "matar <mob>"
     say("matar " .. mob)
 end)
 
@@ -160,14 +204,10 @@ onTalk(function(name, level, mode, text, channelId, pos)
     if not incompleteTaskMacro.isOn() then return end
     if name ~= "Zamasu" then return end
 
-    -- Procura exatamente: task atual de <mob>
+  
     local mob = text:match("task atual de ([^%.]+)")
     if not mob then return end
-
-    -- Fala o nome do mob
     say("matar " .. mob)
-
-    -- Desliga a macro após falar
     incompleteTaskMacro.setOff()
 end)
 
@@ -248,6 +288,7 @@ Panel
 
 
   ]], parent)
+
 
 
 
