@@ -213,7 +213,82 @@ end)
 
 
 
+local checkAol = 11841
+macro(3000, "Comprar aol", function()
+  if getFinger() and getFinger():getId(checkAol) then return end
+  say("!aol")
+end)
 
+
+blessTalk = {
+    {'Deseja adquirir uma', 'bless'},
+    {'Deseja comprar', 'yes'},
+}
+
+local hasBless = false
+local stopTime
+local blessNames = {"Blessing Seller"} 
+
+
+function getDistanceFromPlayer(pos)
+    local playerPos = player:getPosition()
+    if not playerPos or not pos then return nil end
+    return math.max(math.abs(playerPos.x - pos.x), math.abs(playerPos.y - pos.y), math.abs(playerPos.z - pos.z))
+end
+
+local blessScript = macro(100, 'Fast Bless', function()
+    if hasBless then return end
+    if stopTime and stopTime >= now then return end
+
+   
+    for _, blessName in ipairs(blessNames) do
+        local findNpc = getCreatureByName(blessName)
+        if not findNpc then goto continue end
+
+       
+        if getDistanceFromPlayer(findNpc:getPosition()) <= 3 then
+            NPC.say('hi')
+            delay(3000)
+            return
+        end
+
+        ::continue::
+    end
+end)
+
+
+onTalk(function(name, level, mode, text, channelId, pos)
+  
+    if not table.find(blessNames, name) then return end
+    if blessScript.isOff() then return end
+
+    local lowerText = text:lower()
+
+  
+    for _, phrase in ipairs(blessTalk) do
+        if lowerText:find(phrase[1]:lower()) then
+            schedule(200, function()
+                NPC.say(phrase[2])
+            end)
+        end
+    end
+
+    
+    if lowerText:find('possui a bless') or lowerText:find('possui a bless') then
+        hasBless = true
+        modules.game_textmessage.displayGameMessage("Rique Blessed")
+        return
+    end
+
+
+
+  
+    if lowerText:find('nao tem') then
+        warn('Sem gold, liso!')
+        stopTime = now + 60000
+        return
+    end
+end)
 
 
 
@@ -288,6 +363,7 @@ Panel
 
 
   ]], parent)
+
 
 
 
