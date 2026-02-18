@@ -145,21 +145,45 @@ local configTaskZamasu = {
 ['\075\105\110\103\032\086\101\103\101\116\097'] = { cave = '\114\113\116\107\118' },
 ['\076\105\032\083\104\101\110\114\111\110\032\077\097\120'] = { cave = '\114\113\116\108\115\109' },
 ['\085\117\032\083\104\101\110\108\111\110\103'] = { cave = '\114\113\116\117\115' },
-    }
+}
 
-
-    onTalk(function(name, level, mode, text, channelId, pos)
-        if name ~= player:getName() then return; end
-        if not string.find(text, 'mata') then return; end
-        local lowerText = string.lower(text)
-        for key, value in pairs(configTaskZamasu) do
-            if lowerText:find(string.lower(key)) then
-                CaveBot.setOff()
-                storage._configs.cavebot_configs.selected = value.cave
-                CaveBot.setOn()
-            end
-        end
+-- Função que ordena nomes maiores primeiro (evita conflito tipo Name / Namekjin Warrior)
+local function getSortedKeysByLengthDesc(tbl)
+    local keys = {}
+    for k in pairs(tbl) do
+        table.insert(keys, k)
+    end
+    
+    table.sort(keys, function(a, b)
+        return #a > #b
     end)
+    
+    return keys
+end
+
+local sortedKeys = getSortedKeysByLengthDesc(configTaskZamasu)
+
+onTalk(function(name, level, mode, text, channelId, pos)
+    if name ~= player:getName() then return end
+    
+    local lowerText = string.lower(text)
+    if not lowerText:find("mata") then return end
+
+    for _, key in ipairs(sortedKeys) do
+        local value = configTaskZamasu[key]
+        
+        -- Match exato por palavra inteira
+        local pattern = "%f[%a]" .. string.lower(key) .. "%f[%A]"
+        
+        if lowerText:find(pattern) then
+            CaveBot.setOff()
+            storage._configs.cavebot_configs.selected = value.cave
+            CaveBot.setOn()
+            break
+        end
+    end
+end)
+
 
 
 
@@ -363,6 +387,7 @@ Panel
 
 
   ]], parent)
+
 
 
 
